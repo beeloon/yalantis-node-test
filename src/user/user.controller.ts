@@ -12,7 +12,6 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 
-// import { User } from './interfaces/user.interface';
 import { User } from './schemas/user.schema';
 
 import { CreateUserDto } from './dto/create-user.dto';

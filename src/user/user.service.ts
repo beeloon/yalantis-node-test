@@ -1,6 +1,8 @@
 import { resolve } from 'path';
 import * as sharp from 'sharp';
 import { Model } from 'mongoose';
+import { randomUUID } from 'crypto';
+import { readdir, rm } from 'fs/promises';
 import {
   Injectable,
   ConflictException,
@@ -11,7 +13,6 @@ import { InjectModel } from '@nestjs/mongoose';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { User, UserDocument } from './schemas/user.schema';
-import { randomUUID } from 'crypto';
 
 @Injectable()
 export class UserService {
@@ -60,6 +61,11 @@ export class UserService {
   public async removeAll() {
     try {
       await this.userModel.deleteMany();
+
+      const files = await readdir(process.env.UPLOADS_PATH);
+      for (const file of files) {
+        await rm(resolve(process.env.UPLOADS_PATH, file));
+      }
     } catch (err) {
       throw new ConflictException(err.message);
     }
@@ -70,7 +76,7 @@ export class UserService {
     const photoExt = photo.originalname.split('.')[1];
     const uniquePhotoname = `${photoName}_${randomUUID()}.${photoExt}`;
 
-    photo.path = resolve(process.env.NODE_PATH, 'uploads', uniquePhotoname);
+    photo.path = resolve(process.env.UPLOADS_PATH, uniquePhotoname);
   }
 
   private async resizeAndSave(photo: Express.Multer.File) {
