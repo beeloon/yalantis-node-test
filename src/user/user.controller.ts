@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   HttpStatus,
   Param,
@@ -17,11 +18,11 @@ import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('users')
 export class UserController {
-  constructor(private readonly appService: UserService) {}
+  constructor(private readonly userService: UserService) {}
 
   @Get()
   async findAll(): Promise<{ statusCode: HttpStatus; users: User[] }> {
-    const users = await this.appService.findAll();
+    const users = await this.userService.findAll();
 
     return { statusCode: HttpStatus.OK, users };
   }
@@ -30,7 +31,7 @@ export class UserController {
   async findOne(
     @Param('id') id: string,
   ): Promise<{ statusCode: HttpStatus; user: User }> {
-    const user = await this.appService.findOne(id);
+    const user = await this.userService.findOne(id);
 
     return { statusCode: HttpStatus.OK, user };
   }
@@ -45,8 +46,15 @@ export class UserController {
       throw new BadRequestException('Empty or invalid photo field.');
     }
 
-    const userId = await this.appService.create(createUserDto, photo);
+    const userId = await this.userService.create(createUserDto, photo);
 
     return { statusCode: HttpStatus.OK, userId };
+  }
+
+  @Delete()
+  async removeAll() {
+    await this.userService.removeAll();
+
+    return { statusCode: HttpStatus.OK };
   }
 }

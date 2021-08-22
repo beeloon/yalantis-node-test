@@ -57,6 +57,14 @@ export class UserService {
     }
   }
 
+  public async removeAll() {
+    try {
+      await this.userModel.deleteMany();
+    } catch (err) {
+      throw new ConflictException(err.message);
+    }
+  }
+
   private changePhotoPath(photo: Express.Multer.File): void {
     const photoName = photo.originalname.split('.')[0];
     const photoExt = photo.originalname.split('.')[1];
