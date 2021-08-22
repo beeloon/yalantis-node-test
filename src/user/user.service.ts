@@ -63,7 +63,7 @@ export class UserService {
     }
   }
 
-  public async removeAll() {
+  public async removeAll(): Promise<void> {
     try {
       await this.userModel.deleteMany();
 
@@ -84,7 +84,7 @@ export class UserService {
     photo.path = resolve(process.env.UPLOADS_PATH, uniquePhotoname);
   }
 
-  private async resizeAndSave(photo: Express.Multer.File) {
+  private async resizeAndSave(photo: Express.Multer.File): Promise<void> {
     await sharp(photo.buffer)
       .resize({ width: 200, height: 200, position: 'center' })
       .toFile(photo.path, (err) => {

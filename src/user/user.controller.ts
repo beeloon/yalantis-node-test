@@ -42,7 +42,7 @@ export class UserController {
   async create(
     @Body() createUserDto: CreateUserDto,
     @UploadedFile() photo: Express.Multer.File,
-  ) {
+  ): Promise<{ statusCode: HttpStatus; userId: string }> {
     if (!photo) {
       throw new BadRequestException('Empty or invalid photo field.');
     }
@@ -53,7 +53,7 @@ export class UserController {
   }
 
   @Delete()
-  async removeAll() {
+  async removeAll(): Promise<{ statusCode: HttpStatus }> {
     await this.userService.removeAll();
 
     return { statusCode: HttpStatus.OK };
