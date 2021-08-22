@@ -31,11 +31,15 @@ export class UserController {
   @Post()
   @UseInterceptors(FileInterceptor('photo'))
   create(
-    @Body() body: CreateUserDto,
+    @Body() createUserDto: CreateUserDto,
     @UploadedFile() photo: Express.Multer.File,
   ) {
     if (!photo) {
       throw new BadRequestException('Empty or invalid photo field.');
     }
+
+    const userId = this.appService.create(createUserDto, photo);
+
+    return userId;
   }
 }

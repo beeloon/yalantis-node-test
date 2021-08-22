@@ -1,6 +1,11 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { CreateUserDto } from './dto/create-user.dto';
 // import { User } from './interfaces/user.interface';
 import { User, UserDocument } from './schemas/user.schema';
 
@@ -26,15 +31,21 @@ export class UserService {
 
       return user;
     } catch (err) {
-      throw new BadRequestException({ status: 500, message: err.message });
+      throw new BadRequestException(err.message);
     }
   }
 
-  public async create(): Promise<string> {
+  public async create(
+    createUserDto: CreateUserDto,
+    photo: Express.Multer.File,
+  ): Promise<string> {
     try {
+      const userDto = { ...createUserDto, photo: photo.path };
+      const user = await this.userModel.create(userDto);
+
       return '';
     } catch (err) {
-      console.log(err);
+      throw new ConflictException(err.message);
     }
   }
 }
