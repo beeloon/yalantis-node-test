@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpStatus,
   Param,
   Post,
   UploadedFile,
@@ -19,18 +20,24 @@ export class UserController {
   constructor(private readonly appService: UserService) {}
 
   @Get()
-  findAll(): Promise<User[]> {
-    return this.appService.findAll();
+  async findAll(): Promise<{ statusCode: HttpStatus; users: User[] }> {
+    const users = await this.appService.findAll();
+
+    return { statusCode: HttpStatus.OK, users };
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): Promise<User> {
-    return this.appService.findOne(id);
+  async findOne(
+    @Param('id') id: string,
+  ): Promise<{ statusCode: HttpStatus; user: User }> {
+    const user = await this.appService.findOne(id);
+
+    return { statusCode: HttpStatus.OK, user };
   }
 
   @Post()
   @UseInterceptors(FileInterceptor('photo'))
-  create(
+  async create(
     @Body() createUserDto: CreateUserDto,
     @UploadedFile() photo: Express.Multer.File,
   ) {
@@ -38,8 +45,8 @@ export class UserController {
       throw new BadRequestException('Empty or invalid photo field.');
     }
 
-    const userId = this.appService.create(createUserDto, photo);
+    const userId = await this.appService.create(createUserDto, photo);
 
-    return userId;
+    return { statusCode: HttpStatus.OK, userId };
   }
 }

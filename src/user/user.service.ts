@@ -21,7 +21,7 @@ export class UserService {
 
       return users;
     } catch (err) {
-      console.log(err);
+      throw new ConflictException(err.message);
     }
   }
 
@@ -43,7 +43,7 @@ export class UserService {
       const userDto = { ...createUserDto, photo: photo.path };
       const user = await this.userModel.create(userDto);
 
-      return '';
+      return user._id;
     } catch (err) {
       throw new ConflictException(err.message);
     }
