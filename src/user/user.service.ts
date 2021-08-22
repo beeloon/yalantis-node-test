@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 // import { User } from './interfaces/user.interface';
@@ -26,7 +26,7 @@ export class UserService {
 
       return user;
     } catch (err) {
-      console.log(err);
+      throw new BadRequestException({ status: 500, message: err.message });
     }
   }
 
